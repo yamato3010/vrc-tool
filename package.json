@@ -19,6 +19,7 @@
     "@rneui/themed": "^4.0.0-rc.7",
     "base-64": "^1.0.0",
     "expo": "~47.0.9",
+    "expo-secure-store": "~12.0.0",
     "expo-status-bar": "~1.4.2",
     "package.json": "^2.0.1",
     "react": "18.1.0",
