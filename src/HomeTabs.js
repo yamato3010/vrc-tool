@@ -17,20 +17,10 @@ export default function HomeTabs(props) {
           name="Home"
           component={Home}
           options={{ 
+            headerShown: false,
             title: 'ホーム',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="ios-home" size={size} color={color} />
-            ),
-            headerRight: ({color, size}) => (
-              <Button
-                icon={
-                  <Ionicons name="cog-outline" size={25} color={color} />
-                }
-                type="clear"
-                onPress={()=>{
-                  props.navigation.navigate('Settings')
-                }}
-              />
             ),
           }}
         />
@@ -39,6 +29,7 @@ export default function HomeTabs(props) {
           component={Event}
           options={{ 
             title: 'イベントカレンダー',
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="calendar-outline" size={size} color={color} />
             ),
