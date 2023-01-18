@@ -7,7 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { Button } from '@rneui/base';
 
 const Drawer = createDrawerNavigator();
-
 export default function HomeDrawer(props) {
     return (
         <Drawer.Navigator>

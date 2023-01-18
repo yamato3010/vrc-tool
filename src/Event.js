@@ -1,16 +1,71 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '@rneui/base';
+import * as SQLite from 'expo-sqlite'
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/core';
+import * as FileSystem from 'expo-file-system'
+import { FAB, Provider } from 'react-native-paper';
 
 //yarn add react-native-calendars
 //yarn add react-native-sqlite-storage
 //npx pod-install iosの場合は必要
 export default function Event(props) {
+  const calDB = SQLite.openDatabase('calendar.db');
+
+  /*calDB.transaction((tx) => {// remove calendar.db本番では消す
+    tx.executeSql(
+      "DROP TABLE IF EXISTS calendar",
+      null,
+      () => {
+        console.log("DROP TABLE Success.");
+      },
+      () => {
+        console.log("DROP TABLE Failed.");
+        return true;
+      });
+  },
+  () => { console.log("Failed All."); },
+  () => { console.log("Success All."); }
+  )*/
+
+  calDB.transaction((tx) => {
+    tx.executeSql(
+      "CREATE TABLE IF NOT EXISTS calendar (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, startYear INTEGER NOT NULL, startMonth INTEGER NOT NULL, startDay INTEGER NOT NULL, startHour INTEGER NOT NULL, startMinute INTEGER NOT NULL, endYear INTEGER NOT NULL, endMonth INTEGER NOT NULL, endDay INTEGER NOT NULL, endHour INTEGER NOT NULL, endMinute INTEGER NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL);",
+      null,
+      () => {
+        console.log("CREATE TABLE Success.");
+      },
+      () => {
+        console.log("CREATE TABLE Failed.");
+        return true;
+      });
+  },
+  () => { console.log("Failed All."); },
+  () => { console.log("Success All."); }
+  )
+
+
+  calDB.transaction((tx) => {
+    tx.executeSql(
+      'INSERT INTO calendar (startYear, startMonth, startDay, startHour, startMinute, endYear,endMonth, endDay, endHour, endMinute, title, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
+      [2023, 1, 23, 21, 0, 2023, 1,24, 23, 0, "testTitle2", "testDescription2"],
+      (transact, resultSet) => {
+        console.log("INSERT TABLE Success.");
+      },
+      (transact, err) => {
+        console.log("INSERT TABLE Failed.", err);
+        return true;
+      });
+  },
+  () => { console.log("Failed All."); },
+  () => { console.log("Success All."); }
+  );
+
 const navigation = useNavigation();
   return (
-      <Calendar 
+  <Provider>
+    <Calendar 
       enableSwipeMonths
       style={{height:"100%"}}
       theme = {{
@@ -39,7 +94,13 @@ const navigation = useNavigation();
         })
       }}
       onMonthChange = {month => {}}
-      />
+    />
+    <FAB
+      icon="plus"
+      style={styles.fab}
+      onPress={() => {console.log("pressed")}}
+    />
+    </Provider>
   );
 }
 
@@ -51,3 +112,11 @@ LocaleConfig.locales.jp = {
 };
 LocaleConfig.defaultLocale = 'jp';
 
+const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    right: 16,
+    bottom: 16,
+    margin: 16,
+  }
+});
