@@ -192,7 +192,7 @@ export default function Home(props) {
                             style={{
                               backgroundColor: 'white',
                               borderColor: trust[trust.findIndex((obj) => obj.id === friend.id)].color,
-                              width: 130,
+                              width: 115,
                               height: 115,
                               borderWidth: 1.5,
                               borderRadius: 13.5,
@@ -267,6 +267,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "flex-start",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
+    flexWrap: "wrap"
   },
 });
