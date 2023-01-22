@@ -12,6 +12,7 @@ export default function Home(props) {
   const [trust, setTrust] = useState(null);
   const [instances, setInstances] = useState(null);
   const [worlds, setWorlds] = useState(null);
+  const [dispData, setDispData] = useState(null);
   const dataFetchedRef = useRef(false);
 
   global.instance = axios.create({ // インスタンスを作成
@@ -52,15 +53,27 @@ export default function Home(props) {
                       if (elem.tags.includes('system_trust_known')) {
                         if (elem.tags.includes('system_trust_trusted')) {
                           if (elem.tags.includes('system_trust_veteran')) {
-                            trustArr.push("purple");
+                            trustArr.push({
+                              color:"purple",
+                              id: elem.id
+                            });
                           } else {
-                            trustArr.push("orange");
+                            trustArr.push({
+                              color:"orange",
+                              id: elem.id
+                            });
                           }
                         } else {
-                          trustArr.push("green");
+                          trustArr.push({
+                            color:"green",
+                            id: elem.id
+                          });
                         }
                       } else {
-                        trustArr.push("blue");
+                        trustArr.push({
+                          color:"blue",
+                          id: elem.id
+                        });
                       }
                     }
                   }
@@ -90,7 +103,7 @@ export default function Home(props) {
                         })
                     })
                 })
-
+                setDispData(mergeData(instanceArr,friendsArr));
                 setOk(true);
                 setFriends(friendsArr);
                 setTrust(trustArr); //トラストレベルをstateに入れる
@@ -119,47 +132,73 @@ export default function Home(props) {
     getData();
   }, []);
 
-  if (ok == null || friends == null || worlds == null || instances == null) return null; //すべてのstateがsetされるまで画面を描画しない
+  useEffect(() => {
+    if(friends == null || instances == null) return
+    setDispData(mergeData(instances,friends));
+  },[friends,instances])
+
+  const mergeData = (instances, friends) => {
+    let data = [];
+    for(let i = 0; i < instances.length; i++){
+      data.push(
+        {
+          instance: instances[i],
+          friends:[]
+        }
+      );
+      for(let j = 0; j < friends.length; j++){
+        if(instances[i].location == friends[j].location){
+          data[i].friends.push(friends[j]);
+        }
+      }
+    }
+    return data;
+  }
+
+  if (ok == null || friends == null || worlds == null || instances == null || dispData == null) return null; //すべてのstateがsetされるまで画面を描画しない
   if (ok == true) { // セッションが有効な場合，フレンド一覧を出す
     return (
       <ScrollView>
         <View style={styles.container}>
           <Text>有効なセッションです。ログインは不要です。</Text>
           <Text>フレンド一覧</Text>
-          {instances.map((ins, i) => (
-            friends.map((friend, j) =>
-              <>
-                {friend.location == ins.location &&
-                  <TouchableOpacity key={i} onPress={() => alert("Text touch Event")}>
+          {dispData.sort(function (a, b) {
+            if (a.friends.length > b.friends.length) return -1;
+            else if (b.friends.length > a.friends.length) return 1;
+            else return 0;
+          }).map((ins, i) => (
+            <>
+              <TouchableOpacity key={i} onPress={() => alert("Text touch Event")}>
+                <Card
+                  mode='elevated'
+                  style={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    marginTop: 10,
+                    marginLeft: 1,
+                    marginRight: 1,
+                  }}
+                >
+                  <Card.Content>
+                    <Card.Cover source={{ uri: worlds[worlds.findIndex((obj) => obj.id === ins.instance.id.substring(0, ins.instance.id.indexOf(":")))].imageUrl }} />
+                    <Text variant="titleLarge">{worlds[worlds.findIndex((obj) => obj.id === ins.instance.id.substring(0, ins.instance.id.indexOf(":")))].name}</Text>
+                    <Text variant="bodyMedium">{ins.instance.type}({ins.instance.region})</Text>
+                    <Text variant="bodyMedium">{ins.instance.n_users}/{ins.instance.capacity}</Text>
+                    <View key={"view"+i} style={styles.friendCard}>
+              {ins.friends.map((friend, j) =>
+                <TouchableOpacity key={"f" + j} onPress={() => alert("Text touch Event")}>
                     <Card
                       mode='elevated'
                       style={{
                         backgroundColor: 'white',
-                        borderColor: 'black',
-                        marginTop: 10,
-                      }}
-                    >
-                      <Card.Content>
-                        <Card.Cover source={{ uri: worlds[worlds.findIndex((obj) => obj.id === ins.id.substring(0, ins.id.indexOf(":")))].imageUrl }} />
-                        <Text variant="titleLarge">{worlds[worlds.findIndex((obj) => obj.id === ins.id.substring(0, ins.id.indexOf(":")))].name}</Text>
-                        <Text variant="bodyMedium">{ins.type}({ins.region})</Text>
-                        <Text variant="bodyMedium">{ins.n_users}/{ins.capacity}</Text>
-                      </Card.Content>
-                    </Card>
-                  </TouchableOpacity>
-                }
-                <TouchableOpacity style={styles.friend} key={"f" + j} onPress={() => alert("Text touch Event")}>
-                  {friend.location == ins.location &&
-                    <Card
-                      mode='elevated'
-                      style={{
-                        backgroundColor: 'white',
-                        borderColor: trust[j],
+                        borderColor: trust[trust.findIndex((obj) => obj.id === friend.id)].color,
                         width: 130,
                         height: 115,
                         borderWidth: 1.5,
                         borderRadius: 13.5,
-                        marginTop: 5,
+                        marginTop: 1,
+                        marginLeft: 1,
+                        marginRight: 1,
                       }}
                     >
                       <Card.Cover source={{ uri: friend.currentAvatarImageUrl }} style={{
@@ -172,13 +211,15 @@ export default function Home(props) {
                           }}
                           numberOfLines={1}
                         >{friend.displayName}</Text>
-
                       </Card.Content>
                     </Card>
-                  }
                 </TouchableOpacity>
-              </>
-            )
+              )}
+              </View>
+                  </Card.Content>
+                </Card>
+              </TouchableOpacity>
+            </>
           )
           )}
           <Button
@@ -222,10 +263,10 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'center',
   },
-  friend: {
+  friendCard: {
     flex: 1,
-    direction: "row",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
+    flexDirection:"row",
+    justifyContent:"flex-start",
+    alignItems:"flex-start"
   },
 });
