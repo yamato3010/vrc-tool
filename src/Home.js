@@ -54,24 +54,24 @@ export default function Home(props) {
                         if (elem.tags.includes('system_trust_trusted')) {
                           if (elem.tags.includes('system_trust_veteran')) {
                             trustArr.push({
-                              color:"purple",
+                              color: "purple",
                               id: elem.id
                             });
                           } else {
                             trustArr.push({
-                              color:"orange",
+                              color: "orange",
                               id: elem.id
                             });
                           }
                         } else {
                           trustArr.push({
-                            color:"green",
+                            color: "green",
                             id: elem.id
                           });
                         }
                       } else {
                         trustArr.push({
-                          color:"blue",
+                          color: "blue",
                           id: elem.id
                         });
                       }
@@ -103,7 +103,7 @@ export default function Home(props) {
                         })
                     })
                 })
-                setDispData(mergeData(instanceArr,friendsArr));
+                setDispData(mergeData(instanceArr, friendsArr));
                 setOk(true);
                 setFriends(friendsArr);
                 setTrust(trustArr); //トラストレベルをstateに入れる
@@ -133,21 +133,21 @@ export default function Home(props) {
   }, []);
 
   useEffect(() => {
-    if(friends == null || instances == null) return
-    setDispData(mergeData(instances,friends));
-  },[friends,instances])
+    if (friends == null || instances == null) return
+    setDispData(mergeData(instances, friends));
+  }, [friends, instances])
 
   const mergeData = (instances, friends) => {
     let data = [];
-    for(let i = 0; i < instances.length; i++){
+    for (let i = 0; i < instances.length; i++) {
       data.push(
         {
           instance: instances[i],
-          friends:[]
+          friends: []
         }
       );
-      for(let j = 0; j < friends.length; j++){
-        if(instances[i].location == friends[j].location){
+      for (let j = 0; j < friends.length; j++) {
+        if (instances[i].location == friends[j].location) {
           data[i].friends.push(friends[j]);
         }
       }
@@ -184,38 +184,38 @@ export default function Home(props) {
                     <Text variant="titleLarge">{worlds[worlds.findIndex((obj) => obj.id === ins.instance.id.substring(0, ins.instance.id.indexOf(":")))].name}</Text>
                     <Text variant="bodyMedium">{ins.instance.type}({ins.instance.region})</Text>
                     <Text variant="bodyMedium">{ins.instance.n_users}/{ins.instance.capacity}</Text>
-                    <View key={"view"+i} style={styles.friendCard}>
-              {ins.friends.map((friend, j) =>
-                <TouchableOpacity key={"f" + j} onPress={() => alert("Text touch Event")}>
-                    <Card
-                      mode='elevated'
-                      style={{
-                        backgroundColor: 'white',
-                        borderColor: trust[trust.findIndex((obj) => obj.id === friend.id)].color,
-                        width: 130,
-                        height: 115,
-                        borderWidth: 1.5,
-                        borderRadius: 13.5,
-                        marginTop: 1,
-                        marginLeft: 1,
-                        marginRight: 1,
-                      }}
-                    >
-                      <Card.Cover source={{ uri: friend.currentAvatarImageUrl }} style={{
-                        height: 95,
-                      }} />
-                      <Card.Content>
-                        <Text variant="titleLarge"
-                          style={{
-                            textAlign: 'center',
-                          }}
-                          numberOfLines={1}
-                        >{friend.displayName}</Text>
-                      </Card.Content>
-                    </Card>
-                </TouchableOpacity>
-              )}
-              </View>
+                    <View key={"view" + i} style={styles.friendCard}>
+                      {ins.friends.map((friend, j) =>
+                        <TouchableOpacity key={"f" + j} onPress={() => alert("Text touch Event")}>
+                          <Card
+                            mode='elevated'
+                            style={{
+                              backgroundColor: 'white',
+                              borderColor: trust[trust.findIndex((obj) => obj.id === friend.id)].color,
+                              width: 130,
+                              height: 115,
+                              borderWidth: 1.5,
+                              borderRadius: 13.5,
+                              marginTop: 1,
+                              marginLeft: 1,
+                              marginRight: 1,
+                            }}
+                          >
+                            <Card.Cover source={{ uri: friend.currentAvatarImageUrl }} style={{
+                              height: 95,
+                            }} />
+                            <Card.Content>
+                              <Text variant="titleLarge"
+                                style={{
+                                  textAlign: 'center',
+                                }}
+                                numberOfLines={1}
+                              >{friend.displayName}</Text>
+                            </Card.Content>
+                          </Card>
+                        </TouchableOpacity>
+                      )}
+                    </View>
                   </Card.Content>
                 </Card>
               </TouchableOpacity>
@@ -265,8 +265,8 @@ const styles = StyleSheet.create({
   },
   friendCard: {
     flex: 1,
-    flexDirection:"row",
-    justifyContent:"flex-start",
-    alignItems:"flex-start"
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-start"
   },
 });
