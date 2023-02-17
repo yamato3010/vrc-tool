@@ -5,6 +5,8 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment:
+      name: expo
     steps:
       - name: 🏗 Setup repo
         uses: actions/checkout@v3
