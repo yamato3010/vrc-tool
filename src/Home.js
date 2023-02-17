@@ -1,11 +1,10 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert, RefreshControl } from 'react-native';
-import { useEffect, useLayoutEffect, useState, useCallback, useRef } from 'react';
 import { Button } from '@rneui/base';
-import { Avatar, Card } from 'react-native-paper';
-import axios from 'axios';
 import { Input } from '@rneui/themed';
-import { set } from 'react-native-reanimated';
+import axios from 'axios';
+import { StatusBar } from 'expo-status-bar';
+import { useCallback, useEffect, useState } from 'react';
+import { Alert, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Card } from 'react-native-paper';
 
 export default function Home({ navigation, route }) {
   const [ok, setOk] = useState(null);
@@ -19,7 +18,6 @@ export default function Home({ navigation, route }) {
   const [password, setPassword] = useState(null); //テキストフィールドに入力されたパスワードが入る
   const [code, setCode] = useState(null); //テキストフィールドに入力されたパスワードが入る
   const [refreshing, setRefreshing] = useState(false);
-  const dataFetchedRef = useRef(false);
 
   global.instance = axios.create({ // インスタンスを作成
     withCredentials: true,
@@ -286,8 +284,6 @@ export default function Home({ navigation, route }) {
         }
       >
         <View style={styles.container}>
-          <Text>有効なセッションです。ログインは不要です。</Text>
-          <Text>フレンド一覧</Text>
           {dispData.sort(function (a, b) {
             if (a.friends.length > b.friends.length) return -1;
             else if (b.friends.length > a.friends.length) return 1;
