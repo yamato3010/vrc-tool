@@ -93,29 +93,54 @@ export default function Home({ navigation, route }) {
     })
     instanceIDSet.delete("offline");
     instanceIDSet.delete("private");
+    instanceIDSet.delete("traveling");
     setTrust(trustArr);
     setInstanceSet(instanceIDSet);
   }
 
   async function getInstance(insSet: Set<string>) {
     let instanceArr = [];
-    for (let item of insSet) {
-      instanceArr.push(await global.instance
-        .get('https://api.vrchat.cloud/api/1/instances/' + item, { // インスタンスを取得
-          withCredentials: true
-        }))
-    }
+    // map関数を使うため，SetをArrayに変換
+    const insArr = Array.from(insSet);
+    const promises = insArr.map(item =>{
+      return global.instance
+      .get('https://api.vrchat.cloud/api/1/instances/' + item, { // インスタンスを取得
+        withCredentials: true
+      })
+    })
+    const response = await Promise.all(promises);
+    instanceArr.push(...response);
+    // for (let item of insSet) {
+    //   instanceArr.push(await global.instance
+    //     .get('https://api.vrchat.cloud/api/1/instances/' + item, { // インスタンスを取得
+    //       withCredentials: true
+    //     })
+    //     .catch((err:any) => {
+    //       console.log(err.response);
+    //       console.log(item);
+    //     }))
+    // }
     setInstances(instanceArr);
   }
 
   async function getWorld(insSet: Set<string>) {
     let worldArr:Object[] = [];
-    for (let item of insSet) {
-      worldArr.push(await global.instance
-        .get('https://api.vrchat.cloud/api/1/worlds/' + item.substring(0, item.indexOf(":")), { // ワールドを取得
-          withCredentials: true
-        }))
-    }
+    // map関数を使うため，SetをArrayに変換
+    const insArr = Array.from(insSet);
+    const promises = insArr.map(item =>{
+      return global.instance
+      .get('https://api.vrchat.cloud/api/1/worlds/' + item.substring(0, item.indexOf(":")), { // ワールドを取得
+        withCredentials: true
+      })
+    })
+    const response = await Promise.all(promises);
+    worldArr.push(...response);
+    // for (let item of insSet) {
+    //   worldArr.push(await global.instance
+    //     .get('https://api.vrchat.cloud/api/1/worlds/' + item.substring(0, item.indexOf(":")), { // ワールドを取得
+    //       withCredentials: true
+    //     }))
+    // }
     setWorlds(worldArr);
   }
 
@@ -210,7 +235,7 @@ export default function Home({ navigation, route }) {
     console.log(trust.length + " " + instanceSet.size)
     console.log("インスタンス情報取得");
     getInstance(instanceSet);
-  }, [trust, instanceSet])
+  }, [instanceSet])
 
   useEffect(() => {
     if (instances == null) return
