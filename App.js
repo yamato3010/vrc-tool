@@ -1,19 +1,15 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button, Tab } from '@rneui/base';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import 'react-native-gesture-handler';
-import Home from './src/Home';
-import Hometabs from './src/HomeTabs';
-import Event from './src/Event';
-import Settings from './src/Settings';
-import Login from './src/Login';
-import HomeDrawer from './src/HomeDrawer'
+import { createStackNavigator } from '@react-navigation/stack';
 import { decode, encode } from 'base-64';
-import { DayTimeline } from './src/EventCalendar/DayTimeline';
+import { StyleSheet } from 'react-native';
+import 'react-native-gesture-handler';
+import Event from './src/Event';
+import Home from './src/Home';
+import HomeDrawer from './src/HomeDrawer';
+import Hometabs from './src/HomeTabs';
+import Login from './src/Login';
+import Settings from './src/Settings';
+// import { DayTimeline } from './src/EventCalendar/DayTimeline';
 
 const Stack = createStackNavigator();
 
@@ -70,13 +66,6 @@ export default function App() {
           component={Settings}
           options={{
             title: '設定',
-          }}
-        />
-        <Stack.Screen
-          name="DayTimeline"
-          component={DayTimeline}
-          options={{
-            title: 'タイムライン',
           }}
         />
       </Stack.Navigator>
