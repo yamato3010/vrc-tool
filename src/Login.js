@@ -4,13 +4,14 @@ import { useState } from 'react';
 import { Input } from '@rneui/themed';
 import { Button } from '@rneui/base';
 
-export default function Login(state) {
+export default function Login({ navigation, route }) {
   const [username, setUsername] = useState(null); //テキストフィールドに入力されたユーザIDが入る
   const [password, setPassword] = useState(null); //テキストフィールドに入力されたパスワードが入る
+  const [code, setCode] = useState(null); //テキストフィールドに入力されたパスワードが入る
 
   const login = async (userid, password) => {
       console.log("ログインします")
-      instance
+      global.instance
         .get('https://api.vrchat.cloud/api/1/auth/user', {
           auth: {
             username: userid,
@@ -47,6 +48,23 @@ export default function Login(state) {
         })
   }
 
+  const verifyEmail = async () => {
+    global.instance
+    .post('https://api.vrchat.cloud/api/1/auth/twofactorauth/emailotp/verify',{
+      withCredentials: true,
+      code: code
+    })
+    .then(res => {
+      console.log("成功");
+      console.log(res);
+      // global.cookie = res.headers['set-cookie'];
+    })
+    .catch(err => {
+      console.log("error");
+      console.log(err.response);
+    })
+  }
+
   return (
     <View style={styles.container}>
       <Text>VRChat ID(ユーザーネーム)とパスワードを入力してください</Text>
@@ -70,17 +88,32 @@ export default function Login(state) {
           login(username,password);
         }}
       />
+      <Input
+        placeholder="コード"
+        leftIcon={{ type: 'font-awesome', name: 'key' }}
+        onChangeText={value => setCode(value)}
+        secureTextEntry={true}
+        errorStyle={{ color: 'red' }}
+        errorMessage='ENTER A VALID ERROR HERE'
+      />
       <Button
-        title="ログインテスト"
+        title="veryfyEmail"
         onPress={async () => {
-          login("testAvater", "ponchannnyamato");
+          verifyEmail();
         }}
       />
       <Button
         title="cookieテスト"
         onPress={async () => {
-          let res = await verify();
-          console.log(res); //TODO:verify()から結果が返されてから処理を行うようにする
+          // navigation.navigate({
+          //   name: 'HomeDrawer',
+          //   params: { ok: true },
+          //   merge: true,
+          // });
+          navigation.navigate('HomeDrawer',{
+            screen: 'Home',
+            params:{ok: true}
+          })
         }}
       />
       <StatusBar style="auto" />
