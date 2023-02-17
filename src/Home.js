@@ -1,12 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useEffect, useLayoutEffect, useState, useRef } from 'react';
+import { useEffect, useLayoutEffect, useState, useCallback, useRef } from 'react';
 import { Button } from '@rneui/base';
 import { Avatar, Card } from 'react-native-paper';
 import axios from 'axios';
+import { Input } from '@rneui/themed';
 import { set } from 'react-native-reanimated';
 
-export default function Home(props) {
+export default function Home({ navigation, route }) {
   const [ok, setOk] = useState(null);
   const [friends, setFriends] = useState(null);
   const [trust, setTrust] = useState(null);
@@ -14,118 +15,15 @@ export default function Home(props) {
   const [instances, setInstances] = useState(null);
   const [worlds, setWorlds] = useState(null);
   const [dispData, setDispData] = useState(null);
+  const [username, setUsername] = useState(null); //テキストフィールドに入力されたユーザIDが入る
+  const [password, setPassword] = useState(null); //テキストフィールドに入力されたパスワードが入る
+  const [code, setCode] = useState(null); //テキストフィールドに入力されたパスワードが入る
   const dataFetchedRef = useRef(false);
 
   global.instance = axios.create({ // インスタンスを作成
     withCredentials: true,
     baseURL: "https://api.vrchat.cloud/api/1"
   });
-
-  async function getData() {
-    global.instance
-      .get('https://api.vrchat.cloud/api/1/auth', {
-        withCredentials: true
-      })
-      .then(res => {
-        console.log("現在のセッションは有効です");
-        console.log(res.data.ok);
-        if (res.data.ok == true) {
-          //フレンド一覧を取得する
-          global.instance
-            .get('https://api.vrchat.cloud/api/1/auth/user/friends', {
-              withCredentials: true
-            })
-            .then(res => {
-              // console.log("フレンド一覧を取得しました");
-              // console.log(res.data);
-              let friendsArr = res.data;
-              let trustArr = [];
-              let instanceIDSet = new Set();
-              let instanceArr = [];
-              let worldArr = [];
-              friendsArr.forEach((elem, index) => {
-                instanceIDSet.add(elem.location); // instanceSetに入れる
-                if (elem.tags.length == 0) { // tagsに何も入っていなければVisiter確定
-                  trustArr.push("gray");
-                } else {
-                  if (elem.tags.includes('system_trust_basic')) {
-                    if (elem.tags.includes('system_trust_known')) {
-                      if (elem.tags.includes('system_trust_trusted')) {
-                        if (elem.tags.includes('system_trust_veteran')) {
-                          trustArr.push({
-                            color: "purple",
-                            id: elem.id
-                          });
-                        } else {
-                          trustArr.push({
-                            color: "orange",
-                            id: elem.id
-                          });
-                        }
-                      } else {
-                        trustArr.push({
-                          color: "green",
-                          id: elem.id
-                        });
-                      }
-                    } else {
-                      trustArr.push({
-                        color: "blue",
-                        id: elem.id
-                      });
-                    }
-                  }
-                }
-              });
-              console.log(trustArr);
-              instanceIDSet.delete("offline");
-              instanceIDSet.delete("private");
-
-              instanceIDSet.forEach((elem, i) => {
-                console.log("ループ内")
-                global.instance
-                  .get('https://api.vrchat.cloud/api/1/instances/' + elem, { // インスタンスを取得
-                    withCredentials: true
-                  })
-                  .then((res) => {
-                    instanceArr.push(res.data);
-                    console.log("フレンドがいるインスタンス一覧情報");
-                    // console.log(res.data);
-                    global.instance
-                      .get('https://api.vrchat.cloud/api/1/worlds/' + elem.substring(0, elem.indexOf(":")), { // ワールドを取得
-                        withCredentials: true
-                      })
-                      .then((res) => {
-                        worldArr.push(res.data);
-                        console.log("フレンドがいるワールド一覧情報");
-                        // console.log(res.data);
-                      })
-                  })
-              })
-              setDispData(mergeData(instanceArr, friendsArr));
-              setOk(true);
-              setFriends(friendsArr);
-              setTrust(trustArr); //トラストレベルをstateに入れる
-              setInstances(instanceArr);
-              setWorlds(worldArr);
-            })
-            .catch(err => {
-              console.log("フレンド一覧の取得に失敗しました");
-              console.log(err.response);
-              console.log(err);
-            })
-        } //セッションが有向であるときにtrueを返す
-        else { //セッションが無効な時にfalseを返す
-          console.log("セッションが無効です");
-          setOk(false);
-        }
-      })
-      .catch(err => {
-        console.log("セッションの確認ができませんでした");
-        console.log(err);
-        setOk(false);
-      })
-  }
 
   async function checkAuth() {
     await global.instance
@@ -138,7 +36,7 @@ export default function Home(props) {
       })
       .catch(err =>{
         console.log("checkAuthに失敗しました。");
-        console.log(err.response);
+        console.log(err.response)
         setOk(false);
       })
   }
@@ -222,7 +120,7 @@ export default function Home(props) {
     setWorlds(worldArr);
   }
 
-  async function margeData() {
+  async function mergeData() {
     let data = [];
     await new Promise((resolve, reject) => {
     for (let i = 0; i < instances.length; i++) {
@@ -242,41 +140,59 @@ export default function Home(props) {
   })
     setDispData(data);
   }
-  const mergeData = (instances, friends) => {
-    let data = [];
-    for (let i = 0; i < instances.length; i++) {
-      data.push(
-        {
-          instance: instances[i],
-          friends: []
-        }
-      );
-      for (let j = 0; j < friends.length; j++) {
-        if (instances[i].location == friends[j].location) {
-          data[i].friends.push(friends[j]);
-        }
-      }
-    }
-    return data;
-  }
-  // useEffect(() => {
-  //   if (dataFetchedRef.current) return;
-  //   dataFetchedRef.current = true;
-  //   // getData();
-  // }, []);
 
-  // useEffect(() => {
-  //   if (friends == null || instances == null) return
-  //   setDispData(mergeData(instances, friends));
-  // }, [friends, instances])
+  const login = async (userid, password) => {
+      console.log("ログインします")
+      global.instance
+        .get('https://api.vrchat.cloud/api/1/auth/user', {
+          auth: {
+            username: userid,
+            password: password,
+          },
+          withCredentials: true
+        })
+        .then(res => {
+          console.log("成功");
+          console.log(res);
+          setOk(true);
+        })
+        .catch(err => {
+          console.log("error");
+          console.log(err.response);
+        })
+  }
+
+  const verifyEmail = async () => {
+    global.instance
+    .post('https://api.vrchat.cloud/api/1/auth/twofactorauth/emailotp/verify',{
+      withCredentials: true,
+      code: code
+    })
+    .then(res => {
+      console.log("成功");
+      console.log(res);
+      // global.cookie = res.headers['set-cookie'];
+    })
+    .catch(err => {
+      console.log("error");
+      console.log(err.response);
+    })
+  }
 
   useEffect(() => {
+    console.log("帰ってきた");
+  },[route])
+
+  useEffect(() => {
+    // if(props.ok != undefined){
+    //   setOk(true);
+    // }
     console.log("checkAuth実行");
     checkAuth();
   },[])
 
   useEffect(() => {
-    if(ok == null) return
+    if(ok == null || ok == false) return
     console.log(ok)
     console.log("getFriends実行");
     getFriends();
@@ -307,29 +223,54 @@ export default function Home(props) {
     if(worlds == null) return
     console.log(worlds.length)
     console.log("ワールドを確認");
-    margeData(instances, friends)
+    mergeData(instances, friends)
   },[worlds])
 
   useEffect(() => {
     if(dispData == null) return
-    console.log("ーーーーーーdispdataここからーーーーーー");
-    console.log(dispData)
-    console.log("ーーーーーーdispdataここまでーーーーーー");
   },[dispData])
 
   if(ok == false) { // セッションが無効な場合，ログインを促す
+    // navigation.navigate('Login');
     return (
       <View style={styles.container}>
-        <Text>フレンド一覧を表示するためにはVRChatアカウントでログインする必要があります</Text>
-        <Button
-          title="ログイン"
-          onPress={() => {
-            //ログイン画面へ
-            props.navigation.navigate('Login')
-          }}
-        />
-        <StatusBar style="auto" />
-      </View>
+      <Text>VRChat ID(ユーザーネーム)とパスワードを入力してください</Text>
+      <Input
+        placeholder='VRChat ID'
+        leftIcon={{ type: 'font-awesome', name: 'user' }}
+        onChangeText={value => setUsername(value)}
+      />
+      <Input
+        placeholder="パスワード"
+        leftIcon={{ type: 'font-awesome', name: 'key' }}
+        onChangeText={value => setPassword(value)}
+        secureTextEntry={true}
+        errorStyle={{ color: 'red' }}
+        errorMessage='ENTER A VALID ERROR HERE'
+      />
+      <Button
+        title="ログイン"
+        onPress={async () => {
+          //入力されたユーザIDとパスワードを使用してログイン関数を呼び出す
+          login(username,password);
+        }}
+      />
+      <Input
+        placeholder="コード"
+        leftIcon={{ type: 'font-awesome', name: 'key' }}
+        onChangeText={value => setCode(value)}
+        secureTextEntry={true}
+        errorStyle={{ color: 'red' }}
+        errorMessage='ENTER A VALID ERROR HERE'
+      />
+      <Button
+        title="veryfyEmail"
+        onPress={async () => {
+          verifyEmail();
+        }}
+      />
+      <StatusBar style="auto" />
+    </View>
     );
   }
 
@@ -411,6 +352,13 @@ export default function Home(props) {
                 })
                 .then((res) => {
                   console.log(res.data);
+                  setDispData(null);
+                  setWorlds(null);
+                  setInstances(null);
+                  setInstanceSet(null);
+                  setFriends(null);
+                  setTrust(null);
+                  setOk(false);
                   Alert("ログアウトしました！");
                 })
             }}
