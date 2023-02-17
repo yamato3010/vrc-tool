@@ -1,8 +1,8 @@
+name: PrePublish
 on:
   pull_request:
     types: [opened, synchronize]
     branches: [ develop ]
-  workflow_dispatch:
 jobs:
   publish:
     runs-on: ubuntu-latest
