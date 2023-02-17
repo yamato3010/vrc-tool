@@ -35,7 +35,7 @@ export default function Home({ navigation, route }) {
         if (res.data.ok == true) setOk(true);
         else setOk(false);
       })
-      .catch(err =>{
+      .catch(err => {
         console.log("checkAuthに失敗しました。");
         console.log(err.response)
         setOk(false);
@@ -50,7 +50,7 @@ export default function Home({ navigation, route }) {
       .then(res => {
         setFriends(res.data);
       })
-      .catch(err =>{
+      .catch(err => {
         console.log("getFriendsに失敗しました。");
         console.log(err.response);
       })
@@ -101,18 +101,18 @@ export default function Home({ navigation, route }) {
 
   async function getInstance(insSet) {
     let instanceArr = [];
-      for(let item of insSet){
-        instanceArr.push(await global.instance
+    for (let item of insSet) {
+      instanceArr.push(await global.instance
         .get('https://api.vrchat.cloud/api/1/instances/' + item, { // インスタンスを取得
           withCredentials: true
         }))
-      }
+    }
     setInstances(instanceArr);
   }
 
   async function getWorld(insSet) {
     let worldArr = [];
-    for(let item of insSet){
+    for (let item of insSet) {
       worldArr.push(await global.instance
         .get('https://api.vrchat.cloud/api/1/worlds/' + item.substring(0, item.indexOf(":")), { // ワールドを取得
           withCredentials: true
@@ -124,61 +124,61 @@ export default function Home({ navigation, route }) {
   async function mergeData() {
     let data = [];
     await new Promise((resolve, reject) => {
-    for (let i = 0; i < instances.length; i++) {
-      data.push(
-        {
-          instance: instances[i],
-          friends: []
-        }
-      );
-      for (let j = 0; j < friends.length; j++) {
-        if (instances[i].data.location == friends[j].location) {
-          data[i].friends.push(friends[j]);
+      for (let i = 0; i < instances.length; i++) {
+        data.push(
+          {
+            instance: instances[i],
+            friends: []
+          }
+        );
+        for (let j = 0; j < friends.length; j++) {
+          if (instances[i].data.location == friends[j].location) {
+            data[i].friends.push(friends[j]);
+          }
         }
       }
-    }
-    resolve();
-  })
+      resolve();
+    })
     setDispData(data);
   }
 
   const login = async (userid, password) => {
-      console.log("ログインします")
-      global.instance
-        .get('https://api.vrchat.cloud/api/1/auth/user', {
-          auth: {
-            username: userid,
-            password: password,
-          },
-          withCredentials: true
-        })
-        .then(res => {
-          console.log("成功");
-          console.log(res);
-          // TODO メール認証が発生した場合にOKになってしまうので，それをどうにかする
-          setOk(true);
-        })
-        .catch(err => {
-          console.log("error");
-          console.log(err.response);
-        })
+    console.log("ログインします")
+    global.instance
+      .get('https://api.vrchat.cloud/api/1/auth/user', {
+        auth: {
+          username: userid,
+          password: password,
+        },
+        withCredentials: true
+      })
+      .then(res => {
+        console.log("成功");
+        console.log(res);
+        // TODO メール認証が発生した場合にOKになってしまうので，それをどうにかする
+        setOk(true);
+      })
+      .catch(err => {
+        console.log("error");
+        console.log(err.response);
+      })
   }
 
   const verifyEmail = async () => {
     global.instance
-    .post('https://api.vrchat.cloud/api/1/auth/twofactorauth/emailotp/verify',{
-      withCredentials: true,
-      code: code
-    })
-    .then(res => {
-      console.log("成功");
-      console.log(res);
-      // global.cookie = res.headers['set-cookie'];
-    })
-    .catch(err => {
-      console.log("error");
-      console.log(err.response);
-    })
+      .post('https://api.vrchat.cloud/api/1/auth/twofactorauth/emailotp/verify', {
+        withCredentials: true,
+        code: code
+      })
+      .then(res => {
+        console.log("成功");
+        console.log(res);
+        // global.cookie = res.headers['set-cookie'];
+      })
+      .catch(err => {
+        console.log("error");
+        console.log(err.response);
+      })
   }
 
   const refresh = useCallback(async () => {
@@ -191,89 +191,89 @@ export default function Home({ navigation, route }) {
     // }
     console.log("checkAuth実行");
     checkAuth();
-  },[])
+  }, [])
 
   useEffect(() => {
-    if(ok == null || ok == false) return
+    if (ok == null || ok == false) return
     console.log(ok)
     console.log("getFriends実行");
     getFriends();
-  },[ok,refreshing])
+  }, [ok, refreshing])
 
   useEffect(() => {
-    if(friends == null) return
+    if (friends == null) return
     console.log(friends.length)
     console.log("friendsから，instanceIDSetとtrustArrを作成");
     createTrustAndInstanceSet();
-  },[friends])
+  }, [friends])
 
   useEffect(() => {
-    if(trust == null || instanceSet == null) return
+    if (trust == null || instanceSet == null) return
     console.log(trust.length + " " + instanceSet.size)
     console.log("インスタンス情報取得");
     getInstance(instanceSet);
-  },[trust,instanceSet])
+  }, [trust, instanceSet])
 
   useEffect(() => {
-    if(instances == null) return
+    if (instances == null) return
     console.log(instances.length)
     console.log("インスタンスを確認");
     getWorld(instanceSet);
-  },[instances])
+  }, [instances])
 
   useEffect(() => {
-    if(worlds == null) return
+    if (worlds == null) return
     console.log(worlds.length)
     console.log("ワールドを確認");
     mergeData(instances, friends)
-  },[worlds])
+  }, [worlds])
 
   useEffect(() => {
-    if(dispData == null) return
+    if (dispData == null) return
     setRefreshing(false);
-  },[dispData])
+  }, [dispData])
 
-  if(ok == false) { // セッションが無効な場合，ログインを促す
+  if (ok == false) { // セッションが無効な場合，ログインを促す
     // navigation.navigate('Login');
     return (
       <View style={styles.container}>
-      <Text>VRChat ID(ユーザーネーム)とパスワードを入力してください</Text>
-      <Input
-        placeholder='VRChat ID'
-        leftIcon={{ type: 'font-awesome', name: 'user' }}
-        onChangeText={value => setUsername(value)}
-      />
-      <Input
-        placeholder="パスワード"
-        leftIcon={{ type: 'font-awesome', name: 'key' }}
-        onChangeText={value => setPassword(value)}
-        secureTextEntry={true}
-        errorStyle={{ color: 'red' }}
-        errorMessage='ENTER A VALID ERROR HERE'
-      />
-      <Button
-        title="ログイン"
-        onPress={async () => {
-          //入力されたユーザIDとパスワードを使用してログイン関数を呼び出す
-          login(username,password);
-        }}
-      />
-      <Input
-        placeholder="コード"
-        leftIcon={{ type: 'font-awesome', name: 'key' }}
-        onChangeText={value => setCode(value)}
-        secureTextEntry={true}
-        errorStyle={{ color: 'red' }}
-        errorMessage='ENTER A VALID ERROR HERE'
-      />
-      <Button
-        title="veryfyEmail"
-        onPress={async () => {
-          verifyEmail();
-        }}
-      />
-      <StatusBar style="auto" />
-    </View>
+        <Text>VRChat ID(ユーザーネーム)とパスワードを入力してください</Text>
+        <Input
+          placeholder='VRChat ID'
+          leftIcon={{ type: 'font-awesome', name: 'user' }}
+          onChangeText={value => setUsername(value)}
+        />
+        <Input
+          placeholder="パスワード"
+          leftIcon={{ type: 'font-awesome', name: 'key' }}
+          onChangeText={value => setPassword(value)}
+          secureTextEntry={true}
+          errorStyle={{ color: 'red' }}
+          errorMessage='ENTER A VALID ERROR HERE'
+        />
+        <Button
+          title="ログイン"
+          onPress={async () => {
+            //入力されたユーザIDとパスワードを使用してログイン関数を呼び出す
+            login(username, password);
+          }}
+        />
+        <Input
+          placeholder="コード"
+          leftIcon={{ type: 'font-awesome', name: 'key' }}
+          onChangeText={value => setCode(value)}
+          secureTextEntry={true}
+          errorStyle={{ color: 'red' }}
+          errorMessage='ENTER A VALID ERROR HERE'
+        />
+        <Button
+          title="veryfyEmail"
+          onPress={async () => {
+            verifyEmail();
+          }}
+        />
+        <StatusBar style="auto" />
+      </View>
     );
   }
 
