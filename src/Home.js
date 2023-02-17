@@ -154,6 +154,7 @@ export default function Home({ navigation, route }) {
         .then(res => {
           console.log("成功");
           console.log(res);
+          // TODO メール認証が発生した場合にOKになってしまうので，それをどうにかする
           setOk(true);
         })
         .catch(err => {
