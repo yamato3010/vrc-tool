@@ -2,8 +2,8 @@ import { Button } from '@rneui/base';
 import { Input } from '@rneui/themed';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useEffect, useState } from 'react';
-import { Alert, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, useCallback, useEffect, useState } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Card } from 'react-native-paper';
 
 export default function Home({ navigation, route }) {
@@ -29,11 +29,11 @@ export default function Home({ navigation, route }) {
       .get('https://api.vrchat.cloud/api/1/auth', {
         withCredentials: true
       })
-      .then(res => {
+      .then((res: { data: { ok: boolean; }; }) => {
         if (res.data.ok == true) setOk(true);
         else setOk(false);
       })
-      .catch(err => {
+      .catch((err: { response: any; }) => {
         console.log("checkAuthに失敗しました。");
         console.log(err.response)
         setOk(false);
@@ -45,10 +45,10 @@ export default function Home({ navigation, route }) {
       .get('https://api.vrchat.cloud/api/1/auth/user/friends', {
         withCredentials: true
       })
-      .then(res => {
+      .then((res: { data: any; }) => {
         setFriends(res.data);
       })
-      .catch(err => {
+      .catch((err: { response: any; }) => {
         console.log("getFriendsに失敗しました。");
         console.log(err.response);
       })
@@ -56,8 +56,8 @@ export default function Home({ navigation, route }) {
 
   async function createTrustAndInstanceSet() {
     let instanceIDSet = new Set();
-    let trustArr = [];
-    await friends.forEach((data, index) => {
+    let trustArr:Object[] = [];
+    await friends.forEach((data: { location: object; tags: string | string[]; id: string; }, index: any) => {
       instanceIDSet.add(data.location); // instanceSetに入れる
       if (data.tags.length == 0) { // tagsに何も入っていなければVisiter確定
         trustArr.push("gray");
@@ -97,7 +97,7 @@ export default function Home({ navigation, route }) {
     setInstanceSet(instanceIDSet);
   }
 
-  async function getInstance(insSet) {
+  async function getInstance(insSet: Set<string>) {
     let instanceArr = [];
     for (let item of insSet) {
       instanceArr.push(await global.instance
@@ -108,8 +108,8 @@ export default function Home({ navigation, route }) {
     setInstances(instanceArr);
   }
 
-  async function getWorld(insSet) {
-    let worldArr = [];
+  async function getWorld(insSet: Set<string>) {
+    let worldArr:Object[] = [];
     for (let item of insSet) {
       worldArr.push(await global.instance
         .get('https://api.vrchat.cloud/api/1/worlds/' + item.substring(0, item.indexOf(":")), { // ワールドを取得
@@ -120,8 +120,8 @@ export default function Home({ navigation, route }) {
   }
 
   async function mergeData() {
-    let data = [];
-    await new Promise((resolve, reject) => {
+    let data:any = [];
+    await new Promise<void>((resolve, reject) => {
       for (let i = 0; i < instances.length; i++) {
         data.push(
           {
@@ -140,7 +140,7 @@ export default function Home({ navigation, route }) {
     setDispData(data);
   }
 
-  const login = async (userid, password) => {
+  const login = async (userid: string, password: string) => {
     console.log("ログインします")
     global.instance
       .get('https://api.vrchat.cloud/api/1/auth/user', {
@@ -150,13 +150,13 @@ export default function Home({ navigation, route }) {
         },
         withCredentials: true
       })
-      .then(res => {
+      .then((res: any) => {
         console.log("成功");
         console.log(res);
         // TODO メール認証が発生した場合にOKになってしまうので，それをどうにかする
         setOk(true);
       })
-      .catch(err => {
+      .catch((err: { response: any; }) => {
         console.log("error");
         console.log(err.response);
       })
@@ -168,12 +168,12 @@ export default function Home({ navigation, route }) {
         withCredentials: true,
         code: code
       })
-      .then(res => {
+      .then((res: any) => {
         console.log("成功");
         console.log(res);
         // global.cookie = res.headers['set-cookie'];
       })
-      .catch(err => {
+      .catch((err: { response: any; }) => {
         console.log("error");
         console.log(err.response);
       })
@@ -223,7 +223,7 @@ export default function Home({ navigation, route }) {
     if (worlds == null) return
     console.log(worlds.length)
     console.log("ワールドを確認");
-    mergeData(instances, friends)
+    mergeData();
   }, [worlds])
 
   useEffect(() => {
@@ -284,11 +284,11 @@ export default function Home({ navigation, route }) {
         }
       >
         <View style={styles.container}>
-          {dispData.sort(function (a, b) {
+          {dispData.sort(function (a: { friends: string | any[]; }, b: { friends: string | any[]; }) {
             if (a.friends.length > b.friends.length) return -1;
             else if (b.friends.length > a.friends.length) return 1;
             else return 0;
-          }).map((ins, i) => (
+          }).map((ins: { id: Key; instance: { data: { id: string; type: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; region: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; n_users: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; capacity: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; }; }; friends: any[]; }, i: any) => (
             <>
               <TouchableOpacity key={ins.id} onPress={() => alert("Text touch Event")}>
                 <Card
@@ -303,19 +303,19 @@ export default function Home({ navigation, route }) {
                   }}
                 >
                   <Card.Content>
-                    <Card.Cover source={{ uri: worlds[worlds.findIndex((obj) => obj.data.id === ins.instance.data.id.substring(0, ins.instance.data.id.indexOf(":")))].data.imageUrl }} />
-                    <Text variant="titleLarge">{worlds[worlds.findIndex((obj) => obj.data.id === ins.instance.data.id.substring(0, ins.instance.data.id.indexOf(":")))].data.name}</Text>
-                    <Text variant="bodyMedium">{ins.instance.data.type}({ins.instance.data.region})</Text>
-                    <Text variant="bodyMedium">{ins.instance.data.n_users}/{ins.instance.data.capacity}</Text>
+                    <Card.Cover source={{ uri: worlds[worlds.findIndex((obj: { data: { id: any; }; }) => obj.data.id === ins.instance.data.id.substring(0, ins.instance.data.id.indexOf(":")))].data.imageUrl }} />
+                    <Text>{worlds[worlds.findIndex((obj: { data: { id: any; }; }) => obj.data.id === ins.instance.data.id.substring(0, ins.instance.data.id.indexOf(":")))].data.name}</Text>
+                    <Text>{ins.instance.data.type}({ins.instance.data.region})</Text>
+                    <Text>{ins.instance.data.n_users}/{ins.instance.data.capacity}</Text>
                     <View style={styles.friendCard}>
-                      {ins.friends.map((friend, j) =>
+                      {ins.friends.map((friend: { id: Key; currentAvatarImageUrl: any; displayName: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; }, j: any) =>
                         <TouchableOpacity key={friend.id} onPress={() => alert("Text touch Event")}>
                           <Card
                             key={friend.id}
                             mode='elevated'
                             style={{
                               backgroundColor: 'white',
-                              borderColor: trust[trust.findIndex((obj) => obj.id === friend.id)].color,
+                              borderColor: trust[trust.findIndex((obj: { id: any; }) => obj.id === friend.id)].color,
                               width: 115,
                               height: 115,
                               borderWidth: 1.5,
@@ -329,7 +329,7 @@ export default function Home({ navigation, route }) {
                               height: 95,
                             }} />
                             <Card.Content>
-                              <Text variant="titleLarge"
+                              <Text
                                 style={{
                                   textAlign: 'center',
                                 }}
@@ -353,7 +353,7 @@ export default function Home({ navigation, route }) {
                 .put('https://api.vrchat.cloud/api/1/logout', { // インスタンスを取得
                   withCredentials: true
                 })
-                .then((res) => {
+                .then((res: { data: any; }) => {
                   console.log(res.data);
                   setDispData(null);
                   setWorlds(null);
@@ -362,7 +362,7 @@ export default function Home({ navigation, route }) {
                   setFriends(null);
                   setTrust(null);
                   setOk(false);
-                  Alert("ログアウトしました！");
+                  alert("ログアウトしました！");
                 })
             }}
           />

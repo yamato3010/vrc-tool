@@ -1,8 +1,8 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { useState } from 'react';
-import { Input } from '@rneui/themed';
 import { Button } from '@rneui/base';
+import { Input } from '@rneui/themed';
+import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function Login({ navigation, route }) {
   const [username, setUsername] = useState(null); //テキストフィールドに入力されたユーザIDが入る
@@ -32,7 +32,7 @@ export default function Login({ navigation, route }) {
 
   const verify = async () => {
       console.log("現在のセッションが有効か確認")
-      instance
+      global.instance
         .get('https://api.vrchat.cloud/api/1/auth', {
           withCredentials: true
         })

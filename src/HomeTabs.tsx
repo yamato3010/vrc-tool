@@ -1,12 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { Button } from '@rneui/base';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import Home from './Home';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Button } from '@rneui/base';
+import { StyleSheet } from 'react-native';
 import Event from './Event';
-import Settings from './Settings';
+import Home from './Home';
 
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -33,10 +31,10 @@ export default function HomeTabs(props) {
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="calendar-outline" size={size} color={color} />
             ),
-            headerRight: ({color, size}) => (
+            headerRight: ({tintColor}) => (
               <Button
                 icon={
-                  <Ionicons name="cog-outline" size={25} color={color} />
+                  <Ionicons name="cog-outline" size={25} color={tintColor} />
                 }
                 type="clear"
                 onPress={()=>{

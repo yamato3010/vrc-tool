@@ -1,14 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button } from '@rneui/base';
-import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/core';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
 
 //yarn add react-native-calendars
 //yarn add react-native-sqlite-storage
 //npx pod-install iosの場合は必要
 export default function Event(props) {
-const navigation = useNavigation();
+const navigation = useNavigation<any>();
   return (
       <Calendar 
       enableSwipeMonths
