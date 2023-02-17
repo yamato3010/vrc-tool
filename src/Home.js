@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert, RefreshControl } from 'react-native';
 import { useEffect, useLayoutEffect, useState, useCallback, useRef } from 'react';
 import { Button } from '@rneui/base';
 import { Avatar, Card } from 'react-native-paper';
@@ -18,6 +18,7 @@ export default function Home({ navigation, route }) {
   const [username, setUsername] = useState(null); //テキストフィールドに入力されたユーザIDが入る
   const [password, setPassword] = useState(null); //テキストフィールドに入力されたパスワードが入る
   const [code, setCode] = useState(null); //テキストフィールドに入力されたパスワードが入る
+  const [refreshing, setRefreshing] = useState(false);
   const dataFetchedRef = useRef(false);
 
   global.instance = axios.create({ // インスタンスを作成
@@ -180,9 +181,9 @@ export default function Home({ navigation, route }) {
     })
   }
 
-  useEffect(() => {
-    console.log("帰ってきた");
-  },[route])
+  const refresh = useCallback(async () => {
+    setRefreshing(true);
+  }, []);
 
   useEffect(() => {
     // if(props.ok != undefined){
@@ -197,7 +198,7 @@ export default function Home({ navigation, route }) {
     console.log(ok)
     console.log("getFriends実行");
     getFriends();
-  },[ok])
+  },[ok,refreshing])
 
   useEffect(() => {
     if(friends == null) return
@@ -229,6 +230,7 @@ export default function Home({ navigation, route }) {
 
   useEffect(() => {
     if(dispData == null) return
+    setRefreshing(false);
   },[dispData])
 
   if(ok == false) { // セッションが無効な場合，ログインを促す
@@ -278,7 +280,11 @@ export default function Home({ navigation, route }) {
   if (ok == null || friends == null || worlds == null || instances == null || dispData == null) return null; //すべてのstateがsetされるまで画面を描画しない
   if (ok == true && dispData != null) { // セッションが有効な場合，フレンド一覧を出す
     return (
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+        }
+      >
         <View style={styles.container}>
           <Text>有効なセッションです。ログインは不要です。</Text>
           <Text>フレンド一覧</Text>
