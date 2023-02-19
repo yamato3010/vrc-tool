@@ -344,7 +344,7 @@ export default function Home({ navigation, route }) {
                   <Card.Content>
                     <Card.Cover source={{ uri: worlds[worlds.findIndex((obj: { data: { id: any; }; }) => obj.data.id === ins.instance.data.id.substring(0, ins.instance.data.id.indexOf(":")))].data.imageUrl }} />
                     <Text>{worlds[worlds.findIndex((obj: { data: { id: any; }; }) => obj.data.id === ins.instance.data.id.substring(0, ins.instance.data.id.indexOf(":")))].data.name}</Text>
-                    <Text>{ins.instance.data.type}({ins.instance.data.region})</Text>
+                    <Text>{ins.instance.data.type=="hidden" ? "friend+" : ins.instance.data.type}({ins.instance.data.region})</Text>
                     <Text>{ins.instance.data.n_users}/{ins.instance.data.capacity}</Text>
                     <View style={styles.friendCard}>
                       {ins.friends.map((friend: { id: Key; currentAvatarImageUrl: any; displayName: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; }, j: any) =>
