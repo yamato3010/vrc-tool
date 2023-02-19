@@ -3,7 +3,7 @@ import { Input } from '@rneui/themed';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, useCallback, useEffect, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Card } from 'react-native-paper';
 
 export default function Home({ navigation, route }) {
@@ -18,6 +18,7 @@ export default function Home({ navigation, route }) {
   const [password, setPassword] = useState(null); //テキストフィールドに入力されたパスワードが入る
   const [code, setCode] = useState(null); //テキストフィールドに入力されたパスワードが入る
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   global.instance = axios.create({ // インスタンスを作成
     withCredentials: true,
@@ -218,6 +219,7 @@ export default function Home({ navigation, route }) {
 
   useEffect(() => {
     if (ok == null || ok == false) return
+    setLoading(true);
     console.log(ok)
     console.log("getFriends実行");
     getFriends();
@@ -253,6 +255,7 @@ export default function Home({ navigation, route }) {
 
   useEffect(() => {
     if (dispData == null) return
+    setLoading(false);
     setRefreshing(false);
   }, [dispData])
 
@@ -300,7 +303,13 @@ export default function Home({ navigation, route }) {
     );
   }
 
-  if (ok == null || friends == null || worlds == null || instances == null || dispData == null) return null; //すべてのstateがsetされるまで画面を描画しない
+  if (ok == null || friends == null || worlds == null || instances == null || dispData == null || loading == true) 
+    return (
+      <View style={styles.loadscreen}>
+        <ActivityIndicator size="large" />
+        <Text>読み込み中...</Text>
+      </View>
+    );
   if (ok == true && dispData != null) { // セッションが有効な場合，フレンド一覧を出す
     return (
       <ScrollView
@@ -411,5 +420,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     flexWrap: "wrap"
+  },
+  loadscreen: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
