@@ -19,6 +19,7 @@ export default function Home({ navigation, route }) {
   const [code, setCode] = useState(null); //テキストフィールドに入力されたパスワードが入る
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loginErr, setLoginErr] = useState(false);
 
   global.instance = axios.create({ // インスタンスを作成
     withCredentials: true,
@@ -36,7 +37,6 @@ export default function Home({ navigation, route }) {
       })
       .catch((err: { response: any; }) => {
         console.log("checkAuthに失敗しました。");
-        alert("checkAuthに失敗しました。");
         console.log(err.response)
         setOk(false);
       })
@@ -181,12 +181,13 @@ export default function Home({ navigation, route }) {
       .then((res: any) => {
         console.log("成功");
         console.log(res);
+        setLoginErr(false);
         // TODO メール認証が発生した場合にOKになってしまうので，それをどうにかする
         setOk(true);
       })
       .catch((err: { response: any; }) => {
         console.log("error");
-        alert("ログインに失敗しました");
+        setLoginErr(true);
         console.log(err.response);
       })
   }
@@ -279,7 +280,7 @@ export default function Home({ navigation, route }) {
           onChangeText={value => setPassword(value)}
           secureTextEntry={true}
           errorStyle={{ color: 'red' }}
-          errorMessage='ENTER A VALID ERROR HERE'
+          errorMessage={loginErr ? "ユーザネームまたはパスワードが異なります" : ""}
         />
         <Button
           title="ログイン"
@@ -294,7 +295,7 @@ export default function Home({ navigation, route }) {
           onChangeText={value => setCode(value)}
           secureTextEntry={true}
           errorStyle={{ color: 'red' }}
-          errorMessage='ENTER A VALID ERROR HERE'
+          errorMessage=''
         />
         <Button
           title="veryfyEmail"
