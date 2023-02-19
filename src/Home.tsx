@@ -36,6 +36,7 @@ export default function Home({ navigation, route }) {
       })
       .catch((err: { response: any; }) => {
         console.log("checkAuthに失敗しました。");
+        alert("checkAuthに失敗しました。");
         console.log(err.response)
         setOk(false);
       })
@@ -51,6 +52,7 @@ export default function Home({ navigation, route }) {
       })
       .catch((err: { response: any; }) => {
         console.log("getFriendsに失敗しました。");
+        alert("getFriendsに失敗しました。");
         console.log(err.response);
       })
   }
@@ -167,7 +169,7 @@ export default function Home({ navigation, route }) {
   }
 
   const login = async (userid: string, password: string) => {
-    console.log("ログインします")
+    console.log("ログインします");
     global.instance
       .get('https://api.vrchat.cloud/api/1/auth/user', {
         auth: {
@@ -184,6 +186,7 @@ export default function Home({ navigation, route }) {
       })
       .catch((err: { response: any; }) => {
         console.log("error");
+        alert("ログインに失敗しました");
         console.log(err.response);
       })
   }
@@ -201,6 +204,7 @@ export default function Home({ navigation, route }) {
       })
       .catch((err: { response: any; }) => {
         console.log("error");
+        alert("コード認証に失敗しました");
         console.log(err.response);
       })
   }
@@ -307,7 +311,7 @@ export default function Home({ navigation, route }) {
     return (
       <View style={styles.loadscreen}>
         <ActivityIndicator size="large" />
-        <Text>読み込み中...</Text>
+        <Text>データ取得中...</Text>
       </View>
     );
   if (ok == true && dispData != null) { // セッションが有効な場合，フレンド一覧を出す
