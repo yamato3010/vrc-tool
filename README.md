@@ -5,7 +5,9 @@ VRChatterのための支援ツールです。
  
 # DEMO
  
- 画像は開発途中のものです。
+ 画像は開発途中のものです。  
+ 
+ <img alt="本アプリケーションのスクリーンショット" src="https://i.gyazo.com/a4c9c0d93968a4309380706e1f96a715.png" width="320px">
 
 # Features
  
