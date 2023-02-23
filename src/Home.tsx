@@ -16,10 +16,11 @@ export default function Home({ navigation, route }) {
   const [dispData, setDispData] = useState(null);
   const [username, setUsername] = useState(null); //テキストフィールドに入力されたユーザIDが入る
   const [password, setPassword] = useState(null); //テキストフィールドに入力されたパスワードが入る
-  const [code, setCode] = useState(null); //テキストフィールドに入力されたパスワードが入る
+  const [code, setCode] = useState(null); //テキストフィールドに入力されたメール認証コードが入る
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loginErr, setLoginErr] = useState(false);
+  const [requireTwoFactor, setRequireTwoFactor] = useState(false);
 
   global.instance = axios.create({ // インスタンスを作成
     withCredentials: true,
@@ -180,10 +181,15 @@ export default function Home({ navigation, route }) {
       })
       .then((res: any) => {
         console.log("成功");
-        console.log(res);
-        setLoginErr(false);
-        // TODO メール認証が発生した場合にOKになってしまうので，それをどうにかする
-        setOk(true);
+        console.log(res.data);
+        // if(res.data.requiresTwoFactorAuth[0] == "emailOtp"){
+        if(res.data.hasOwnProperty("requiresTwoFactorAuth")){
+          alert("メールでの認証が必要です！");
+          setRequireTwoFactor(true);
+        }else{
+          setLoginErr(false);
+          setOk(true);
+        }
       })
       .catch((err: { response: any; }) => {
         console.log("error");
@@ -202,6 +208,8 @@ export default function Home({ navigation, route }) {
         console.log("成功");
         console.log(res);
         // global.cookie = res.headers['set-cookie'];
+        setRequireTwoFactor(false);
+        setOk(true);
       })
       .catch((err: { response: any; }) => {
         console.log("error");
@@ -268,41 +276,49 @@ export default function Home({ navigation, route }) {
     // navigation.navigate('Login');
     return (
       <View style={styles.container}>
-        <Text>VRChat ID(ユーザーネーム)とパスワードを入力してください</Text>
-        <Input
-          placeholder='VRChat ID'
-          leftIcon={{ type: 'font-awesome', name: 'user' }}
-          onChangeText={value => setUsername(value)}
-        />
-        <Input
-          placeholder="パスワード"
-          leftIcon={{ type: 'font-awesome', name: 'key' }}
-          onChangeText={value => setPassword(value)}
-          secureTextEntry={true}
-          errorStyle={{ color: 'red' }}
-          errorMessage={loginErr ? "ユーザネームまたはパスワードが異なります" : ""}
-        />
-        <Button
-          title="ログイン"
-          onPress={async () => {
-            //入力されたユーザIDとパスワードを使用してログイン関数を呼び出す
-            login(username, password);
-          }}
-        />
-        <Input
-          placeholder="コード"
-          leftIcon={{ type: 'font-awesome', name: 'key' }}
-          onChangeText={value => setCode(value)}
-          secureTextEntry={true}
-          errorStyle={{ color: 'red' }}
-          errorMessage=''
-        />
-        <Button
-          title="veryfyEmail"
-          onPress={async () => {
-            verifyEmail();
-          }}
-        />
+        {!requireTwoFactor &&
+          <>
+            <Text>VRChat ID(ユーザーネーム)とパスワードを入力してください</Text>
+            <Input
+              placeholder='VRChat ID'
+              leftIcon={{ type: 'font-awesome', name: 'user' }}
+              onChangeText={value => setUsername(value)}
+            />
+            <Input
+              placeholder="パスワード"
+              leftIcon={{ type: 'font-awesome', name: 'key' }}
+              onChangeText={value => setPassword(value)}
+              secureTextEntry={true}
+              errorStyle={{ color: 'red' }}
+              errorMessage={loginErr ? "ユーザネームまたはパスワードが異なります" : ""}
+            />
+            <Button
+              title="ログイン"
+              onPress={async () => {
+                //入力されたユーザIDとパスワードを使用してログイン関数を呼び出す
+                login(username, password);
+              }}
+            />
+          </>
+        }
+        {requireTwoFactor &&
+          <>
+            <Input
+              placeholder="コード"
+              leftIcon={{ type: 'font-awesome', name: 'key' }}
+              onChangeText={value => setCode(value)}
+              secureTextEntry={true}
+              errorStyle={{ color: 'red' }}
+              errorMessage=''
+            />
+            <Button
+              title="認証"
+              onPress={async () => {
+                verifyEmail();
+              }}
+            />
+          </>
+       }
         <StatusBar style="auto" />
       </View>
     );
