@@ -1,7 +1,8 @@
+name: PrePublish
 on:
   pull_request:
+    types: [opened, reopened, synchronize]
     branches: [ develop ]
-  workflow_dispatch:
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -33,7 +34,7 @@ jobs:
         run: yarn install
 
       - name: 🚀 Publish preview
-        run: expo publish  --non-interactive
+        run: expo publish --release-channel=pr-${{ github.event.number }} --non-interactive
 
       - name: 💬 Comment preview
         uses: expo/expo-github-action/preview-comment@v7
