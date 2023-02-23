@@ -25,4 +25,4 @@ VRChatterのための支援ツールです。
 
 # License
  
-[MIT license](https://en.wikipedia.org/wiki/MIT_License)
+GNU Affero General Public License v3.0
