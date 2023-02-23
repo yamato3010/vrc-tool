@@ -1,10 +1,8 @@
-import React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import Home from './Home';
-import Event from './Event'
-import HomeTabs from './HomeTabs';
 import { Ionicons } from '@expo/vector-icons';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Button } from '@rneui/base';
+import React from 'react';
+import HomeTabs from './HomeTabs';
 
 const Drawer = createDrawerNavigator();
 
@@ -16,10 +14,10 @@ export default function HomeDrawer(props) {
                 component={HomeTabs}
                 options={{ 
                     title: 'ホーム',
-                    headerRight: ({color, size}) => (
+                    headerRight: ({tintColor}) => (
                         <Button
                         icon={
-                            <Ionicons name="cog-outline" size={25} color={color} />
+                            <Ionicons name="cog-outline" size={25} color={tintColor} />
                         }
                         type="clear"
                         onPress={()=>{
