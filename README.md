@@ -7,8 +7,11 @@ VRChatterのための支援ツールです。
  
  画像は開発途中のものです。  
  
+<p>
  <img alt="本アプリケーションのスクリーンショット" src="https://i.gyazo.com/a4c9c0d93968a4309380706e1f96a715.png" width="320px">
-
+ <img alt="本アプリケーションのスクリーンショット" src="https://i.gyazo.com/afe4a9b6fbb4db8de3bc9a06ab722bae.png" width="320px">
+</p>
+ 
 # Features
  
 - フレンドのオンライン状況一覧表示
