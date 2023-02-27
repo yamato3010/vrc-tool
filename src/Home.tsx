@@ -348,7 +348,7 @@ export default function Home({ navigation, route }) {
                     <Text>{ins.instance.data.n_users}/{ins.instance.data.capacity}</Text>
                     <View style={styles.friendCard}>
                       {ins.friends.map((friend: { id: Key; currentAvatarImageUrl: any; displayName: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; }, j: any) =>
-                        <TouchableOpacity key={friend.id} onPress={() => alert("Text touch Event")}>
+                        <TouchableOpacity key={friend.id} onPress={() => navigation.navigate('UserInfo', {data:friend})}>
                           <Card
                             key={friend.id}
                             mode='elevated'
