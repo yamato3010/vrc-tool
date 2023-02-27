@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { decode, encode } from 'base-64';
+import { BlurView } from 'expo-blur';
 import { StyleSheet } from 'react-native';
 import 'react-native-gesture-handler';
 import Event from './src/Event';
@@ -68,6 +69,10 @@ export default function App() {
           component={UserInfo}
           options={{
             title: 'ユーザ情報',
+            headerTransparent: true,
+            headerBackground: () => (
+                <BlurView tint="light" intensity={100} style={StyleSheet.absoluteFill} />
+            ),
           }}
         />
         <Stack.Screen
@@ -75,6 +80,10 @@ export default function App() {
           component={InstanceInfo}
           options={{
             title: 'インスタンス情報',
+            headerTransparent: true,
+            headerBackground: () => (
+                <BlurView tint="light" intensity={100} style={StyleSheet.absoluteFill} />
+            ),
           }}
         />
         <Stack.Screen

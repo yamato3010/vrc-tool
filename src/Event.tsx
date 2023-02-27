@@ -1,4 +1,6 @@
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/core';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 
 //yarn add react-native-calendars
@@ -6,10 +8,16 @@ import { Calendar, LocaleConfig } from 'react-native-calendars';
 //npx pod-install iosの場合は必要
 export default function Event(props) {
 const navigation = useNavigation<any>();
+const headerHeight = useHeaderHeight();
+const bottomHeight = useBottomTabBarHeight();
   return (
       <Calendar 
       enableSwipeMonths
-      style={{height:"100%"}}
+      style={{
+        height:"100%",
+        marginTop: headerHeight,
+        marginBottom: -bottomHeight
+      }}
       theme = {{
         'stylesheet.calendar.main': {
           monthView: {
