@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Button } from '@rneui/base';
+import { BlurView } from 'expo-blur';
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import HomeTabs from './HomeTabs';
 
 const Drawer = createDrawerNavigator();
@@ -24,6 +26,10 @@ export default function HomeDrawer(props) {
                             props.navigation.navigate('Settings')
                         }}
                         />
+                    ),
+                    headerTransparent: true,
+                    headerBackground: () => (
+                        <BlurView tint="light" intensity={100} style={StyleSheet.absoluteFill} />
                     ),
                   }}
                 />

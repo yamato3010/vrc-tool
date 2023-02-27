@@ -1,3 +1,5 @@
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { Button } from '@rneui/base';
 import { Input } from '@rneui/themed';
 import axios from 'axios';
@@ -20,6 +22,8 @@ export default function Home({ navigation, route }) {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loginErr, setLoginErr] = useState(false);
+  const headerHeight = useHeaderHeight();
+  const bottomHeight = useBottomTabBarHeight();
 
   global.instance = axios.create({ // インスタンスを作成
     withCredentials: true,
@@ -267,7 +271,13 @@ export default function Home({ navigation, route }) {
   if (ok == false) { // セッションが無効な場合，ログインを促す
     // navigation.navigate('Login');
     return (
-      <View style={styles.container}>
+      <View style={{
+        flex: 1,
+        alignItems: 'stretch',
+        justifyContent: 'center',
+        marginTop: headerHeight,
+        marginBottom: bottomHeight
+      }}>
         <Text>VRChat ID(ユーザーネーム)とパスワードを入力してください</Text>
         <Input
           placeholder='VRChat ID'
@@ -322,7 +332,13 @@ export default function Home({ navigation, route }) {
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       >
-        <View style={styles.container}>
+        <View style={{
+          flex: 1,
+          alignItems: 'stretch',
+          justifyContent: 'center',
+          marginTop: headerHeight,
+          marginBottom: bottomHeight
+        }}>
           {dispData.sort(function (a: { friends: string | any[]; }, b: { friends: string | any[]; }) {
             if (a.friends.length > b.friends.length) return -1;
             else if (b.friends.length > a.friends.length) return 1;

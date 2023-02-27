@@ -1,11 +1,22 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 
 export default function InstanceInfo({ route }) {
+    const headerHeight = useHeaderHeight();
     return (
-        <ScrollView>
-            <View style={styles.container}>
+        <ScrollView
+            scrollIndicatorInsets={{
+                top: headerHeight, left: 0, bottom: 0, right: 0
+            }}
+        >
+            <View style={{
+                flex: 1,
+                alignItems: 'stretch',
+                justifyContent: 'center',
+                marginTop: headerHeight,
+            }}>
                 <Card style={{
                         backgroundColor: 'white',
                         borderColor: 'black',
@@ -27,11 +38,3 @@ export default function InstanceInfo({ route }) {
         </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'stretch',
-        justifyContent: 'center',
-    }
-});
