@@ -329,7 +329,7 @@ export default function Home({ navigation, route }) {
             else return 0;
           }).map((ins: { id: Key; instance: { data: { id: string; type: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; region: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; n_users: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; capacity: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; }; }; friends: any[]; }, i: any) => (
             <>
-              <TouchableOpacity key={ins.id} onPress={() => alert("Text touch Event")}>
+              <TouchableOpacity key={ins.id} onPress={() => navigation.navigate('InstanceInfo', {ins:ins, worlds:worlds})}>
                 <Card
                   key={ins.id}
                   mode='elevated'

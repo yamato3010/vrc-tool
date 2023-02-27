@@ -7,6 +7,7 @@ import Event from './src/Event';
 import Home from './src/Home';
 import HomeDrawer from './src/HomeDrawer';
 import Hometabs from './src/HomeTabs';
+import InstanceInfo from './src/InstanceInfo';
 import Login from './src/Login';
 import Settings from './src/Settings';
 import UserInfo from './src/UserInfo';
@@ -67,6 +68,13 @@ export default function App() {
           component={UserInfo}
           options={{
             title: 'ユーザ情報',
+          }}
+        />
+        <Stack.Screen
+          name="InstanceInfo"
+          component={InstanceInfo}
+          options={{
+            title: 'インスタンス情報',
           }}
         />
         <Stack.Screen
