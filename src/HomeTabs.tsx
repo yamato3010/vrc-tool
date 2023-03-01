@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Button } from '@rneui/base';
+import { BlurView } from 'expo-blur';
 import { StyleSheet } from 'react-native';
 import Event from './Event';
 import Home from './Home';
@@ -10,7 +11,14 @@ const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
 export default function HomeTabs(props) {
   return (
-      <Tabs.Navigator>
+      <Tabs.Navigator
+        screenOptions={{
+          tabBarStyle: { position: 'absolute' },
+          tabBarBackground: () => (
+            <BlurView tint="light" intensity={100} style={StyleSheet.absoluteFill} />
+          ),
+        }}
+      >
         <Tabs.Screen
           name="Home"
           component={Home}

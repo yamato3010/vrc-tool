@@ -1,3 +1,5 @@
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { Button } from '@rneui/base';
 import { Input } from '@rneui/themed';
 import axios from 'axios';
@@ -21,6 +23,8 @@ export default function Home({ navigation, route }) {
   const [loading, setLoading] = useState(false);
   const [loginErr, setLoginErr] = useState(false);
   const [requireTwoFactor, setRequireTwoFactor] = useState(false);
+  const headerHeight = useHeaderHeight();
+  const bottomHeight = useBottomTabBarHeight();
 
   global.instance = axios.create({ // インスタンスを作成
     withCredentials: true,
@@ -275,7 +279,13 @@ export default function Home({ navigation, route }) {
   if (ok == false) { // セッションが無効な場合，ログインを促す
     // navigation.navigate('Login');
     return (
-      <View style={styles.container}>
+      <View style={{
+        flex: 1,
+        alignItems: 'stretch',
+        justifyContent: 'center',
+        marginTop: headerHeight,
+        marginBottom: bottomHeight
+      }}>
         {!requireTwoFactor &&
           <>
             <Text>VRChat ID(ユーザーネーム)とパスワードを入力してください</Text>
@@ -338,14 +348,20 @@ export default function Home({ navigation, route }) {
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       >
-        <View style={styles.container}>
+        <View style={{
+          flex: 1,
+          alignItems: 'stretch',
+          justifyContent: 'center',
+          marginTop: headerHeight,
+          marginBottom: bottomHeight
+        }}>
           {dispData.sort(function (a: { friends: string | any[]; }, b: { friends: string | any[]; }) {
             if (a.friends.length > b.friends.length) return -1;
             else if (b.friends.length > a.friends.length) return 1;
             else return 0;
           }).map((ins: { id: Key; instance: { data: { id: string; type: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; region: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; n_users: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; capacity: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; }; }; friends: any[]; }, i: any) => (
             <>
-              <TouchableOpacity key={ins.id} onPress={() => alert("Text touch Event")}>
+              <TouchableOpacity key={ins.id} onPress={() => navigation.navigate('InstanceInfo', {ins:ins, worlds:worlds})}>
                 <Card
                   key={ins.id}
                   mode='elevated'
@@ -364,7 +380,7 @@ export default function Home({ navigation, route }) {
                     <Text>{ins.instance.data.n_users}/{ins.instance.data.capacity}</Text>
                     <View style={styles.friendCard}>
                       {ins.friends.map((friend: { id: Key; currentAvatarImageUrl: any; displayName: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal; }, j: any) =>
-                        <TouchableOpacity key={friend.id} onPress={() => alert("Text touch Event")}>
+                        <TouchableOpacity key={friend.id} onPress={() => navigation.navigate('UserInfo', {data:friend, color:trust[trust.findIndex((obj: { id: any; }) => obj.id === friend.id)].color})}>
                           <Card
                             key={friend.id}
                             mode='elevated'
