@@ -8,13 +8,13 @@ export default function Settings(props) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <ListItem>
+        {/* <ListItem>
         <Entypo name="log-out" size={24} color="#3478F7" />
           <ListItem.Content>
             <ListItem.Title>ログアウト</ListItem.Title>
           </ListItem.Content>
           <ListItem.Chevron />
-        </ListItem>
+        </ListItem> */}
         <ListItem>
         <Feather name="info" size={24} color="#3478F7" />
           <ListItem.Content>
